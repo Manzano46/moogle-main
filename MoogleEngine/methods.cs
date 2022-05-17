@@ -44,9 +44,13 @@ class methods{
         return words;
     }
 
-    public static Dictionary<string,int> times(List<string> words){
+    public static Dictionary<string,int> times(List<string> words, ref Dictionary<string,int> global){
         Dictionary<string,int> fre = new Dictionary<string, int>();
         foreach(string s in words){
+            if(global.ContainsKey(s) && !fre.ContainsKey(s))
+            global[s]++;
+            if(!global.ContainsKey(s))
+            global.Add(s,1);
             if(fre.ContainsKey(s))
             fre[s]++;
             else
@@ -71,5 +75,16 @@ class methods{
             }
         }
     return dp[n,m];
+    }
+
+    public static Dictionary<string,double> findtf_idf(vector x,Dictionary<string,int> global){
+        Dictionary<string,double> sol = new Dictionary<string, double>();
+        for(int i=0;i<x.words.Count();i++){
+            if(!sol.ContainsKey(x.words[i]) && x.freq.ContainsKey(x.words[i])){
+                double point = (double)(x.freq[x.words[i]]) * (double)(Math.Log2(global.Count()/global[x.words[i]]));
+                sol.Add(x.words[i],point);
+             }
+        }
+        return sol;
     }
 }

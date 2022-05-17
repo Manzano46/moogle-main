@@ -8,15 +8,22 @@ public static class Moogle
         List<string> titles = methods.titles();
         List<vector> data = new List<vector>();
 
+        Dictionary<string,int> global = new Dictionary<string, int>();
+
       for(int i=0;i<titles.Count();i++){
             data.Add(new vector());
             data[i].text = methods.read(titles[i]);
             data[i].title = titles[i];
             data[i].words = methods.WORDS(data[i].text);
-           data[i].freq =  methods.times(data[i].words);
+            data[i].freq =  methods.times(data[i].words,ref global);
+       }
+
+       for(int i=0;i<titles.Count();i++){
+           data[i].tf_idf = methods.findtf_idf(data[i],global);
        }
      
         List<string> queryw = methods.WORDS(query);
+       
         for(int i=0;i<queryw.Count();i++){
             string qw = queryw[i];
             int min = int.MaxValue;
@@ -34,9 +41,10 @@ public static class Moogle
         }
 
         query = "";
-        foreach(string x in queryw)
-        query += x + " ";
+        for(int i=0;i<queryw.Count();i++)
+        query += queryw[i];
 
+       
 
         SearchItem[] items = new SearchItem[3] {
             new SearchItem("Hello World", "Lorem ipsum dolor sit amet", 0.9f),
