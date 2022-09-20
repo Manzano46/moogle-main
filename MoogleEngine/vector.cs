@@ -6,6 +6,7 @@ public class vector{
     public List<string> words;
     public double angle;
 
+    public Dictionary<string,List<int>> dist;
     public int MAX;
     public Dictionary<string,double> tf_idf;
     public vector(){
@@ -16,9 +17,10 @@ public class vector{
         this.tf_idf = new Dictionary<string, double>();
         this.MAX = 0;
         this.angle = 0.0;
+        this.dist = new Dictionary<string, List<int>>();
     }
 
-    public vector(string a,string b,Dictionary<string,int> c,List<string> d,Dictionary<string,double> e,int f,double g){
+    public vector(string a,string b,Dictionary<string,int> c,List<string> d,Dictionary<string,double> e,int f,double g,Dictionary<string,List<int>> h){
         this.text = a;
         this.title = b;
         this.freq = c;
@@ -26,5 +28,6 @@ public class vector{
         this.tf_idf = e;
         this.MAX = f;
         this.angle = g;
+        this.dist = h;
     }
 }

@@ -1,5 +1,9 @@
+body{
+    background-color: #666666;
+}
 .results {
     text-align: left;
+    
 }
 
 .item .title {
