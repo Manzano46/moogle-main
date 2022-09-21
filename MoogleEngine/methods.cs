@@ -1,7 +1,7 @@
 namespace MoogleEngine;
 
 //clase de metodos (funciones)
-class methods{
+public class methods{
 
     //read : toma un fichero y devuelve un string con el contenido del archivo
     public static string read(string path){
@@ -82,6 +82,26 @@ class methods{
         return fre;
     }
 
+    //computar las posiciones de las palabras en el texto
+    public static Dictionary<string,List<int>> dist(List<string> x){
+        Dictionary<string,List<int>> sol = new Dictionary<string, List<int>>();
+        for(int i=0;i<x.Count();i++){
+            string wd = x[i];
+
+            if(sol.ContainsKey(wd)){
+                sol[wd].Add(i); 
+            }
+            else{
+                List<int> a = new List<int>();
+                a.Add(i);
+                sol.Add(wd,a);
+            }
+                
+        }
+
+        return sol;
+    }
+
     // edit_distance : con ayuda de una dp en dos dimensiones vamos a computar
     // la distancia(cantidad de cambios minimos) de una palabra a otra
     public static int edit_distance(string a,string b){
@@ -107,9 +127,14 @@ class methods{
 
     public static Dictionary<string,double> findtf_idf(vector x,Dictionary<string,int> global,int n,Dictionary<string,int> global2){
         Dictionary<string,double> sol = new Dictionary<string, double>();
+        n++;
         for(int i=0;i<x.words.Count();i++){
             if(!sol.ContainsKey(x.words[i]) && x.freq.ContainsKey(x.words[i])){
-               double point = (double)((double)(x.freq[x.words[i]])/(double)(global2[x.words[i]])) * (double)(Math.Log((double)(n)/(double)(global[x.words[i]])));
+               
+                double tf = (double)((double)(x.freq[x.words[i]])/(double)(global2[x.words[i]]));
+                double X = (double)(n)/(double)(global[x.words[i]]);
+                double idf = (double)(Math.Log2(X));
+               double point = tf * idf;
                 sol.Add(x.words[i],point);      
              }
         }
@@ -128,50 +153,163 @@ class methods{
         return ans;
     }
     
-    //snipet : tomemos un pedazo del texto en donde se encuentre la palabra de mas
+    // snipet : tomemos un pedazo del texto en donde se encuentre la palabra de mas
     // relevancia
-    public static string snipet(string txt, string word){
+    public static string snipet(vector x, string word){
         string ans = "";
+        
+        if(word.Length <= 2 || x.freq.ContainsKey(word) == false)
+        return "";
+        
+        for(int i=0;i<Math.Min(4,x.dist[word].Count());i++){
+            string t = "...";
 
-        for(int i=0;i<txt.Length;i++){
-            
-            string aux = "";
-            while(i<txt.Length){
-                 if(txt[i] == 'á')
-                aux += 'a';
-                else if(txt[i] == 'ú')
-                aux += 'u';
-                else if(txt[i] == 'ó')
-                aux += 'o';
-                else if(txt[i] == 'í')
-                aux += 'i';
-                else if(txt[i] == 'é')
-                aux += 'e';
-                else
-                aux += txt[i];
-                if('a' <= aux[aux.Length-1] && aux[aux.Length-1] <= 'z')
-                i++;
-                else
-                {
-                    aux = aux.Substring(0,aux.Length-1);
-                    break;
-                }
+            int pos = x.dist[word][i];
+            for(int j = Math.Max(0,pos-20);j<Math.Min(pos+20,x.words.Count());j++){
+                t += " " + x.words[j];
             }
-            aux = aux.ToLower();
-            if(aux == word){
-                int pos = i - word.Length -50;
-                pos = Math.Max(0,pos);
-                int cant = 500;
-                if(pos + cant >= txt.Length)
-                cant = txt.Length-pos;
-                while(txt[pos] != ' ')
-                pos++;
-                while(txt[pos+cant-1] != ' ')
-                cant--;
-                ans = txt.Substring(pos,cant);
-            }
+            t += "...";
+
+            ans += t;
         }
         
+ 
         return ans;
+    }
+
+    // metodo para tomar los documentos de mas relevancia y encontrar los snipet ademas de trabajar con los 
+    // comparadores
+    public static void findsnipet(ref List<string> s, ref List<int> s2, string best,string best2, ref List<vector> data,List<string> si,List<string> no){
+        for (int i = 0; i < 10; i++)
+        {
+            string x = methods.snipet(data[i], best);
+            
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            
+            x = methods.snipet(data[i], best + 's');
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best + "es");
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best.Substring(0,Math.Max(0,best.Length-1)));
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best.Substring(0,Math.Max(0,best.Length-2)));
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+
+            x = methods.snipet(data[i], best2);
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best2 + 's');
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best2 + "es");
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best2.Substring(0,Math.Max(0,best2.Length-1)));
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            x = methods.snipet(data[i], best2.Substring(0,Math.Max(0,best2.Length-2)));
+            if (x.Length > 0)
+            {
+                s.Add(x);
+                s2.Add(i);
+            }
+            
+            while(s2.Count >=2 && s2[s2.Count() - 1] == s2[s2.Count() - 2]){
+                s2.RemoveAt(s2.Count()-1);
+                s[s.Count()-2] += " .......... " + s[s.Count()-1];
+                s.RemoveAt(s.Count()-1);
+            }
+        }
+        for(int i=0;i<no.Count();i++){
+            string wd = no[i];
+            for(int j=0;j<s.Count();j++){
+                if(data[s2[j]].freq.ContainsKey(wd) && data[s2[j]].freq[wd] > 0){
+                    s.RemoveAt(j);
+                    s2.RemoveAt(j);
+                    j--;
+                }
+            }
+        }
+        for(int i=0;i<si.Count();i++){
+            string wd = si[i];
+            for(int j=0;j<s.Count();j++){
+                if(!data[s2[j]].freq.ContainsKey(wd)){
+                    s.RemoveAt(j);
+                    s2.RemoveAt(j);
+                    j--;
+                }
+            }
+        }
+    }
+    // operador de importancia 
+    public static void sum(ref Dictionary<string,double> a,List<string> imp){
+        double sum = 0.0f;
+        foreach(var pair in a)
+        sum += pair.Value*pair.Value*10;
+        
+        for(int i=0;i<imp.Count();i++){
+            a[imp[i]] += sum;
+        }
+    }
+
+    public static int caldist(string L,string R,vector x){
+        int sol = int.MaxValue;
+        if(x.freq.ContainsKey(L) == false || x.freq.ContainsKey(R) == false)
+        return sol;
+        
+        List<int> l = x.dist[L];
+        List<int> r = x.dist[R];
+
+        int i=0,j=0;
+
+        while(i < l.Count() &&  j < r.Count()){
+           sol = Math.Min(sol, Math.Abs(l[i] - r[j]));
+           if(l[i] < r[j])
+           i++;
+           else
+           j++;
+        }
+
+        while(i == l.Count() && j != r.Count()){
+            sol = Math.Min(sol, Math.Abs(l[i-1] - r[j++]));
+        }
+
+        while(i != l.Count() && j == r.Count()){
+            sol = Math.Min(sol, Math.Abs(l[i++] - r[j-1]));
+        }
+
+        return sol;
     }
 }

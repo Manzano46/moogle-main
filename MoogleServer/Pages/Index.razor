@@ -4,10 +4,10 @@
 
 <h1 class="title"> Moogle!</h1>
 
-<input class="srch" @bind="query" placeholder="Introduzca su búsqueda">
+<input class="cosita" @bind="query" @onkeyup="Enter" placeholder="Buscar">
 
-<button type="default" class="btn btn-primary" @onclick="RunQuery">Buscar</button>
-
+<button style="border-radius: 15px;" class="btn-submit" @onclick="RunQuery">Buscar</button>
+ 
 @if (!string.IsNullOrEmpty(result.Suggestion)) {
     <div class="suggestion">
         <p>¿Quisiste decir <strong><a class="sugg" href="#">@result.Suggestion</a></strong>?</p>
@@ -18,7 +18,7 @@
 @foreach (var item in result.Items()) {
     <li class="listt">
         <div class="item">
-            <p class="ftitle">@item.Title</p>
+            <strong class="ftitle">@item.Title</strong>
             <p>... @item.Snippet ...</p>
             <p class="fscore">... @item.Score ...</p>
         </div>
@@ -40,6 +40,9 @@
         // ref engine
             result = Moogle.Query(query);
         }
-
+    public void Enter(KeyboardEventArgs e){
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+            RunQuery();
+    } 
         
 }
