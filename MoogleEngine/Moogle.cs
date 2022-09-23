@@ -49,6 +49,7 @@ public static class Moogle
             if(query[it] == '!'){
                 no.Add(QUERY.words[i]);
                 it++;
+                QUERY.tf_idf[QUERY.words[i]] = 0.0f;
             }
             // afirmacion
             if(query[it] == '^'){

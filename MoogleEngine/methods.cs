@@ -161,11 +161,11 @@ public class methods{
         if(word.Length <= 2 || x.freq.ContainsKey(word) == false)
         return "";
         
-        for(int i=0;i<Math.Min(4,x.dist[word].Count());i++){
+        for(int i=0;i<Math.Min(5,x.dist[word].Count());i++){
             string t = "...";
 
             int pos = x.dist[word][i];
-            for(int j = Math.Max(0,pos-20);j<Math.Min(pos+20,x.words.Count());j++){
+            for(int j = Math.Max(0,pos-50);j<Math.Min(pos+50,x.words.Count());j++){
                 t += " " + x.words[j];
             }
             t += "...";
