@@ -1,5 +1,7 @@
 # ***INFORME ESCRITO***
 
+![](Moogle.png)
+
 ## Estructura :
 
 - vector:

@@ -6,7 +6,7 @@
 
 <input class="cosita" @bind="query" @onkeyup="Enter" placeholder="Buscar">
 
-<button style="border-radius: 15px;" class="btn-submit" @onclick="RunQuery">Buscar</button>
+<button style="border-radius: 17px;" class="btn-submit" @onclick="RunQuery">Buscar</button>
  
 @if (!string.IsNullOrEmpty(result.Suggestion)) {
     <div class="suggestion">
@@ -18,7 +18,7 @@
 @foreach (var item in result.Items()) {
     <li class="listt">
         <div class="item">
-            <strong class="ftitle">@item.Title</strong>
+            <a href = item.title ><strong class="ftitle">@item.Title</strong> </a>
             <p>... @item.Snippet ...</p>
             <p class="fscore">... @item.Score ...</p>
         </div>
